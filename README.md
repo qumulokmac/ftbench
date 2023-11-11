@@ -63,7 +63,7 @@ Ftbench is a set of bash scripts, requiring **bash 4.1 or higher**. It has been 
 Optional packages that are useful for network validation and tuning:
    >  - [iperf3]( https://iperf.fr/)
    >  - [mtr](https://traceroute-online.com/mtr/)
-   >  - [nmap]([https://nmap.org/])
+   >  - [nmap](https://nmap.org/)
 
 <a id="step1"></a>
 ### Step 1: Create the service account
@@ -116,7 +116,7 @@ Change directory into the git repository you cloned and run the install.sh scrip
 <a id="step6"></a>
 ### Step 6: Configure ftbench
 
-- **workers.conf** : Add the names, fully qualified domain names (FQDN), or IP addresses for each worker host to the configuration file: $FTEST\_HOME/config/workers.conf
+- **workers.conf** : Add the names, fully qualified domain names (FQDN), or IP addresses for each worker host to the configuration file: $FTEST_HOME/config/workers.conf
   - Each entry must be resolvable by the control host.
   - _Note: Do not add the control host to the config as it would take on a worker role and be loaded down running jobs._
 
@@ -263,11 +263,11 @@ jq -Rsn '
 <a id="runningftbench"></a>
 ### Running ftbench
 
-Once you have defined your job definitions, execute the script `${FTEST_HOME}/scripts/ftbench`. You can use the Linux `screen` command in case you are diconnected, or launch the script in the background with nohup, as in the example below: 
+Once you have defined your job definitions, execute the script **`${FTEST_HOME}/scripts/ftbench`**. You can use the Linux `screen` command in case you are diconnected, or launch the script in the background with nohup, as in the example below: 
 
 `nohup ${FTEST_HOME}/scripts/ftbench.sh & > ${FTEST_HOME}/ftbench.out &`
 
-You can monitor the ftbench output without concern of interuppting it using `tail` like below: 
+You can monitor the ftbench output without concern of interuppting it using the Linux utility `tail`, command below: 
 
 `tail -f ${FTEST_HOME}/ftbench.out `
 
