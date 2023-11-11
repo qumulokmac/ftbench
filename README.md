@@ -22,7 +22,7 @@ Qumulo ftbench is a framework designed performing storage benchmark testing for 
 11. [Step 8: Mount the NFS exports](#step8)
 12. [Step 9. Configure the Job Definitions](#step9)
 13. [Included utilities](#utilities)
-14. [Running ftbench]#(runningftbench)
+14. [Running ftbench](#runningftbench)
 15. [Output](#output)
 16. [Analyzing the results](#analyzing)
 
@@ -63,7 +63,7 @@ Ftbench is a set of bash scripts, requiring **bash 4.1 or higher**. It has been 
 Optional packages that are useful for network validation and tuning:
    >  - [iperf3]( https://iperf.fr/)
    >  - [mtr](https://traceroute-online.com/mtr/)
-   >  - [nmap]( [https://nmap.org/](https://nmap.org/))
+   >  - [nmap]([https://nmap.org/](https://nmap.org/))
 
 <a id="step1"></a>
 ### Step 1: Create the service account
