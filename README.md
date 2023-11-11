@@ -63,7 +63,7 @@ Ftbench is a set of bash scripts, requiring **bash 4.1 or higher**. It has been 
 Optional packages that are useful for network validation and tuning:
    >  - [iperf3]( https://iperf.fr/)
    >  - [mtr](https://traceroute-online.com/mtr/)
-   >  - [nmap]([https://nmap.org/](https://nmap.org/))
+   >  - [nmap]([https://nmap.org/])
 
 <a id="step1"></a>
 ### Step 1: Create the service account
