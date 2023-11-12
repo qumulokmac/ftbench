@@ -306,6 +306,7 @@ Example: Field level translation for "ft-20231109181137-15501-703-7200-1-24-703-
 
 
 > The raw output from frametest is in CSV format, except for the header, with looks like:
+> 
 ```
 Date,09-Nov-2023
 Time,18:41:39
@@ -317,21 +318,16 @@ Parameters," -w704 -n7200 -t1 -f24 -q24 "
 FrameRate,23.98,fps
 Bandwidth,16.49,MB/s
 DroppedFrames,0
-
-,file,open,io,close,queue
-min,3.676,0.215,3.250,0.001,0
-avg,25.897,19.845,6.048,0.004,0.4
-max,263.373,219.821,175.775,0.160,8
-
-num,start,open,io,close,frametime,queue
-0,41.946,47.254,52.736,52.745,41.686,0
-1,83.459,90.905,96.698,96.700,83.392,0
-
 ```
+
 <a id="analyzing"></a>
 ### Analyzing the results
 
 Once you get the data from ftbench it needs to be analyzed. Currently, this is being done by spreadsheet manipulation. If the tool continues to get traction it will be ported into a database and analyzed with tools such as [Microsoft's Power BI](https://powerbi.microsoft.com/).
+
+Here is an example spreadsheet used to calculate the input variables for ftbench: 
+
+[example config spreadsheet](https://github.com/qumulokmac/ftbench/examples/example-frametest-sizing.xlsx)
 
 ---
 
