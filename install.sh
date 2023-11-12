@@ -45,6 +45,7 @@ fi
 cp -rp  scripts ${FTEST_HOME}
 cp -rp  tools ${FTEST_HOME}
 mkdir -p ${FTEST_HOME}/output ${FTEST_HOME}/archive
+chmod -R 755 ${FTEST_HOME}/
 
 printf "\nftbench installed in $FTEST_HOME\n"
 

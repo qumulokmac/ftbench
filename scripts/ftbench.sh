@@ -239,7 +239,7 @@ declare -a conf
 
 setup
 loadHosts
-loadNodes
+# loadNodes
 
 len=${#conf[@]}
 
