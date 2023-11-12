@@ -9,7 +9,8 @@
 # Check that FTEST_HOME is set and exists
 ###
 if [ ! -e $FTEST_HOME ]; then
-  printf "FTEST_HOME environmental variable is not set or doesnt exist"
+  printf "FTEST_HOME environmental variable is not set or doesnt exist\n"
+  printf "Run mkdir \$FTEST_HOME ?\n\n"
   exit 1
 fi
 
@@ -34,17 +35,17 @@ if [ ! -e 'scripts/ftbench.sh' ] ; then
   printf "Please run install.sh the git repo directory, exiting\n\n"
   exit 2
 fi
-mkdir -p $FTEST_HOME/ftbench
+mkdir -p $FTEST_HOME/config $FTEST_HOME/output $FTEST_HOME/archive 
 
 if [ ! $? ]; then
-  printf "\n\nCould not create the ftbench dir: $FTEST_HOME/ftbench/tools\n"
+  printf "\n\nCould not create the ftbench subdirs, check: $FTEST_HOME\n"
   exit 1
 fi
 
-cp -rp  scripts ${FTEST_HOME}/ftbench
-cp -rp  config ${FTEST_HOME}/ftbench
-cp -rp  tools ${FTEST_HOME}/ftbench
-mkdir -p ${FTEST_HOME}/ftbench/output ${FTEST_HOME}/ftbench/archive
+cp -rp  scripts ${FTEST_HOME}
+cp -rp  tools ${FTEST_HOME}
+mkdir -p ${FTEST_HOME}/output ${FTEST_HOME}/archive
 
+printf "\nftbench installed in $FTEST_HOME\n"
 
-
+exit 0 

@@ -58,7 +58,7 @@ Ftbench is a set of bash scripts, requiring **bash 4.1 or higher**. It has been 
    `sudo yum -y install git jq nfs-utils python3.9 pssh wget`
    
    - *Ubuntu:* 
-   `sudo apt -y install git jq nfs-utils python3.9 pssh wget`
+   `sudo apt -y install git jq nfs-common python3.9 pssh wget`
 
 Optional packages that are useful for network validation and tuning:
    >  - [iperf3]( https://iperf.fr/)
@@ -83,7 +83,7 @@ Example:
 ### Step 3: Set up the environment
 
 1. Set the environmental variable `$FTEST_HOME` to the install directory. For example, this command sets it to "`/home/qumulo`". 
-`export FTEST_HOME=/home/qumulo`
+`export FTEST_HOME=/home/qumulo/ftbench`
 
 1. This directory will store the scripts, tools, output, and archive directories. The output and/or archive directories store logs for each job and the CSV files created.
 
@@ -95,7 +95,7 @@ Example:
    
 **Add the setting to the .bashrc so it is persistent.**
 
-`echo 'export FTEST_HOME=/home/qumulo' >> ~/.bashrc`
+`echo 'export FTEST_HOME=/home/qumulo/ftbench' >> ~/.bashrc`
 
 <a id="step4"></a>
 ### Step 4: Download and install frametest
@@ -105,13 +105,19 @@ The frametest executable can be download manually in a browser, or you can use t
 ```
 cd /tmp
 wget -P /tmp -q http://www.dvsus.com/gold/san/frametest/lin/frametest
-chown 755 /tmp/frametest
+sudo chmod 755 /usr/local/bin/frametest
 sudo cp /tmp/frametest /usr/local/bin
+sudo ln -s /usr/bin/parallel-ssh /usr/local/bin/pssh
 ```
 <a id="step5"></a>
 ### Step 5: Install ftbench
 
 Change directory into the git repository you cloned and run the install.sh script.
+
+```
+cd ~/gitclone
+chmod 755 install.sh
+```
 
 <a id="step6"></a>
 ### Step 6: Configure ftbench
