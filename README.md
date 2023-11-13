@@ -68,17 +68,22 @@ Optional packages that are useful for network validation and tuning:
 <a id="step1"></a>
 ### Step 1: Create the service account
 
-Create a user to be used as the ftbench service account. This is the account you will be installing the software and running the jobs with. The UID needs to be the same across all of the hosts.
+You may want to create a seperate user account for running the ftbench service account. If so, create the account and use it to install the software and running jobs. 
 
-Example:
+   - The **UID must be the same** across all of the worker hosts.
+
+Example command to add an account:
 
 `sudo useradd -d /home/ftbench -u 1337 -c "ftbench service account" -s /bin/bash ftbench`
 
 <a id="step2"></a>
 ### Step 2: Clone this github repository
 
-`git clone https://github.com/qumulokmac/ftbench.git`
-
+```
+cd /tmp
+git clone https://github.com/qumulokmac/ftbench.git
+cd /tmp/ftbench
+```
 
 <a id="step3"></a>
 ### Step 3: Run the ftbench install.sh script
@@ -86,9 +91,9 @@ Example:
 Change directory into the git repository you cloned and run the install.sh script.
 
 ```
-cd /path/to/cloned-repo
+cd /tmp/ftbench or /path/to/cloned-repo
 chmod 755 install.sh
-./install.sh
+bash ./install.sh
 
 ```
 <a id="step4"></a>
