@@ -41,17 +41,15 @@ Ftbench is a set of bash scripts, requiring **bash 4.1 or higher**. It has been 
 1. **Hard requirement**. For frametest to work, *you must install the following package* to enable cross-compilation of programs. See [this]( https://devicetests.com/understanding-gcc-multilib-ubuntu) Ubuntu article to learn more about cross-compilation.
    - Centos: `sudo yum install glibc.i686`
    - Ubuntu: `sudo apt-get install gcc-multilib`
-1. A single "Controller" Linux host is required to manage jobs and distribute processes to the worker hosts for concurrent stream testing.
+1. A **single "Controller"** Linux host is required to manage jobs and distribute processes to the worker hosts for concurrent stream testing.
    - The controller host does not need much processing power, so a general purpose VM is fine.
    
-1. Four or more "Worker" Linux hosts which will run the jobs dispatched from the controller host.
+1. **Four or more "Worker" Linux hosts** which will run the jobs dispatched from the controller host.
    - The worker hosts should be storage-optimized hosts with many CPU/vCPU's and sufficient RAM for the level of testing you wish to perform. 
    - One CPU core per stream is recommended.
-   - For example, if you will be running 512 streams for your max test, you will need 512 available CPU cores across all the worker hosts.
-```Note: Since Qumulo is a scale-out architecture, you will want to have enough hosts to mount each of the nodes of the Qumulo cluster you are testing. The tests will run on a single worker host, but that would not real-world streams from different clients.```
-3. Password-less SSH needs to be configured on all of the hosts, from the controller host to each worker host at a minimum.
-   - There are many ways to configure password-less SSH, each with their pros and cons, therefore the details for setting this up has been left to the reader.
-   - If you are unfamiliar with this, use your favorite internet search engine and search for "configuring Linux ssh password-less ". You will find dozens of articles.
+   - _For example, if you will be running 512 streams for your max test, you will need 512 available CPU cores across all the worker hosts._
+3. **Password-less SSH** needs to be configured on all hosts: from the controller host to each worker host at a minimum.
+   - Here is an [article](https://www.redhat.com/sysadmin/passwordless-ssh) from redhat that can walk you through it.
    - **Net:net**, the service account user needs to be able to ssh from the control host to each worker host to launch the frametest jobs.
 4. Additional packages:
    - *Centos:* 
@@ -64,6 +62,9 @@ Optional packages that are useful for network validation and tuning:
    >  - [iperf3]( https://iperf.fr/)
    >  - [mtr](https://traceroute-online.com/mtr/)
    >  - [nmap](https://nmap.org/)
+
+
+**Note:** Since Qumulo is a scale-out architecture, you will want to have enough hosts to mount each of the nodes of the Qumulo cluster you are testing. 
 
 <a id="step1"></a>
 ### Step 1: Create the service account
