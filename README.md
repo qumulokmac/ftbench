@@ -13,7 +13,7 @@ Qumulo ftbench is a framework designed performing storage benchmark testing for 
 2. [Prerequisites](#prerequisites)
 3. [Requirements](#requirements)
 4. [Steps to follow](#follow) 
-   - [Step 1: Create the service account](#step1)
+   - [Step 1: Creating a service account](#step1)
    - [Step 2: Clone this github repository](#step2)
    - [Step 3: Run the ftbench install.sh script](#step3)
    - [Step 4: Understanding $FTBENCH_HOME](#step4)
@@ -67,7 +67,7 @@ Ftbench is a set of bash scripts, requiring **bash 4.1 or higher**. It has been 
 
 <a id="follow"></a>
 <a id="step1"></a>
-### Step 1: Create the service account
+### Step 1: Creating a service account [optional]
 
 You may want to create a seperate user account for running the ftbench service account. If so, create the account and use it to install the software and running jobs. 
 

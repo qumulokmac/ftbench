@@ -51,6 +51,7 @@ function gatherLogs
     fi
 
     command="scp -rp $USER@${HOSTS[$hostindex]}:/${OUTPUTDIR} ${OUTPUTDIR}/"
+    command="scp -rp $USER@${HOSTS[$hostindex]}:/${OUTPUTDIR}/\* ${OUTPUTDIR}"
     printf "\nGathering output: ${command}\n\n"
     bash -c "${command}" 
 

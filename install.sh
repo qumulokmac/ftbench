@@ -41,6 +41,7 @@ fi
 ###
 # Install frametest
 ###
+  printf "Downloading frametest\n"
   cd /tmp
   wget -P /tmp -q http://www.dvsus.com/gold/san/frametest/lin/frametest
   if [ $? != 0 ] ; then
@@ -61,14 +62,14 @@ if [[ $? != 1 ]]; then
   printf "Frametest is not working correctly. It is likely that the prerequesite libraries are mssing. See Readme.\n"
   exit 1
 else
-  printf "Frametest found and functional, proceeding\n"
+  printf "Frametest found and is functioning, proceeding\n"
 fi
 ###
 # Copy the content from the repo to the $FTBENCH_HOME directory
 ###
 cd - > /dev/null 
 if [ ! -e scripts/ftbench.sh ] ; then
-  printf "Please run install.sh the git repo directory, exiting\n\n"
+  printf "Please run install.sh the git repo directory at /tmp/ftbench; exiting\n\n"
   exit 2
 fi
 mkdir -p $FTBENCH_HOME/config $FTBENCH_HOME/output $FTBENCH_HOME/archive $FTBENCH_HOME/tools ${FTBENCH_HOME}/scripts 
@@ -86,7 +87,7 @@ cp -rp  tools/* ${FTBENCH_HOME}/tools
 chmod -R 755 ${FTBENCH_HOME}
 
 printf "ftbench installed in: $FTBENCH_HOME\nBe sure to mount the NFS exports at /mnt/ftbench.\n"
-printf "Either log out and back in, or source the .bashrc file to set \$FTBENCH_HOME.\nCommands to source .bashrc:\n"
-printf ". ~/.bashrc \&\& echo \$FTBENCH_HOME\n\n"
+printf "Either log out and back in, or source the .bashrc file to set \$FTBENCH_HOME.\nCommand to source .bashrc:\n"
+printf ". ~/.bashrc && echo \$FTBENCH_HOME\n\n"
 
 exit 0 
