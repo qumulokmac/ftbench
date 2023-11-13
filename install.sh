@@ -34,16 +34,28 @@ if [ ! -e $FTEST_HOME ]; then
       exit 1
   fi
 fi
+###
+# Install frametest
+###
 
+  cd /tmp
+  wget -P /tmp -q http://www.dvsus.com/gold/san/frametest/lin/frametest
+  if [ $? != 0 ] ; then
+      printf "Could not download frametest. Check network connectivity to: http://www.dvsus.com/gold/san/frametest/lin/frametest. \n"
+      exit 1
+  fi
+  sudo chmod 755 /usr/local/bin/frametest
+  sudo cp /tmp/frametest /usr/local/bin
+  sudo ln -s /usr/bin/parallel-ssh /usr/local/bin/pssh
 ###
 # Chek that frameset is installed and working
 ###
 
-printf "Checking that frametest is installed in /usr/local/bin and working...\n\n"
+printf "Checking that frametest is installed in /usr/local/bin and functional...\n\n"
 /usr/local/bin/frametest > /dev/null 2>&1
 
 if [[ $? != 1 ]]; then
-  printf "Frametest is not installed or the prerequesite libraries are mssing. See Readme\n"
+  printf "Frametest is not working correctly. It is likely that the prerequesite libraries are mssing. See Readme.\n"
   exit 1
 else
   printf "Frametest found and functional, proceeding\n\n"
@@ -56,17 +68,16 @@ if [ ! -e 'scripts/ftbench.sh' ] ; then
   printf "Please run install.sh the git repo directory, exiting\n\n"
   exit 2
 fi
-mkdir -p $FTEST_HOME/config $FTEST_HOME/output $FTEST_HOME/archive 
+mkdir -p $FTEST_HOME/config $FTEST_HOME/output $FTEST_HOME/archive $FTEST_HOME/tools ${FTEST_HOME}/scripts
 
 if [ ! $? ]; then
   printf "\n\nCould not create the ftbench subdirs, check: $FTEST_HOME\n"
   exit 1
 fi
 
-cp -rp  scripts ${FTEST_HOME}
-cp -rp  tools ${FTEST_HOME}
-mkdir -p ${FTEST_HOME}/output ${FTEST_HOME}/archive
-chmod -R 755 ${FTEST_HOME}/
+cp -rp  scripts/* ${FTEST_HOME}/scripts
+cp -rp  tools/* ${FTEST_HOME}/tools
+chmod -R 755 ${FTEST_HOME}
 
 printf "\nftbench installed in $FTEST_HOME\n"
 
