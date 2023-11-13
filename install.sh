@@ -1,15 +1,16 @@
 #!/bin/bash
 ################################################################################
-# ftbench installer 
+# FT Bench installer script
 # kmac@qumulo.com
 # Nov 10th, 2023
+#
 ################################################################################
 
 USER=`whoami`
 ###
 # Prompt the user for the $FTBENCH_HOME location
 ###
-printf "Enter the absolute path for the install directory [Hit enter for \$HOME/ftbench] "
+printf "Enter the absolute path for the install directory [\$HOME/ftbench] "
 read USERINPUT
 
 if [ -z $USERINPUT ]
@@ -40,7 +41,6 @@ fi
 ###
 # Install frametest
 ###
-
   cd /tmp
   wget -P /tmp -q http://www.dvsus.com/gold/san/frametest/lin/frametest
   if [ $? != 0 ] ; then
@@ -54,7 +54,6 @@ fi
 ###
 # Chek that frameset is installed and working
 ###
-
 printf "Checking that frametest is installed in /usr/local/bin and functional...\n"
 /usr/local/bin/frametest > /dev/null 2>&1
 
@@ -65,8 +64,7 @@ else
   printf "Frametest found and functional, proceeding\n"
 fi
 ###
-# Copy the content from the repo to the install directory
-# Checking that this install.sh script is being run from the git base directory, where this install.sh resides
+# Copy the content from the repo to the $FTBENCH_HOME directory
 ###
 cd - > /dev/null 
 if [ ! -e scripts/ftbench.sh ] ; then
@@ -87,10 +85,8 @@ cp -rp  config/* ${FTBENCH_HOME}/config
 cp -rp  tools/* ${FTBENCH_HOME}/tools
 chmod -R 755 ${FTBENCH_HOME}
 
-printf "ftbench installed in: $FTBENCH_HOME\n"
-printf "To set \$FTBENCH_HOME source the .bashrc file as such:\n\n"
-printf ". ~/.bashrc\n"
-printf "echo \$FTBENCH_HOME\n\n"
-
+printf "ftbench installed in: $FTBENCH_HOME\nBe sure to mount the NFS exports at /mnt/ftbench.\n"
+printf "Either log out and back in, or source the .bashrc file to set \$FTBENCH_HOME.\nCommands to source .bashrc:\n"
+printf ". ~/.bashrc \&\& echo \$FTBENCH_HOME\n\n"
 
 exit 0 

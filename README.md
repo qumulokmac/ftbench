@@ -12,19 +12,19 @@ Qumulo ftbench is a framework designed performing storage benchmark testing for 
 1. [Initial Configuration](#initial-configuration)
 2. [Prerequisites](#prerequisites)
 3. [Requirements](#requirements)
-4. [Step 1: Create the service account](#step1)
-5. [Step 2: Clone this github repository](#step2)
-6. [Step 3: Set up the environment](#step3)
-7. [Step 4: Download and install frametest](#step4)
-8. [Step 5: Install ftbench](#step5)
-9. [Step 6: Configure ftbench](#step6)
-10. [Step 7: Copy frametest to worker hosts](#step7)
-11. [Step 8: Mount the NFS exports](#step8)
-12. [Step 9. Configure the Job Definitions](#step9)
-13. [Included utilities](#utilities)
-14. [Running ftbench](#runningftbench)
-15. [Output](#output)
-16. [Analyzing the results](#analyzing)
+4. [Steps to follow](#follow) 
+   - [Step 1: Create the service account](#step1)
+   - [Step 2: Clone this github repository](#step2)
+   - [Step 3: Run the ftbench install.sh script](#step3)
+   - [Step 4: Understanding $FTBENCH_HOME](#step4)
+   - [Step 5: Configure ftbench](#step5)
+   - [Step 6: Copy frametest to worker hosts](#step6)
+   - [Step 7: Mount the NFS exports](#step7)
+   - [Step 8: Configuring Job Definitions](#step8)
+4. [Included utilities](#utilities)
+5. [Running ftbench](#runningftbench)
+6. [Output](#output)
+7. [Analyzing the results](#analyzing)
 
 <a id="initial-configuration"></a>
 ## Initial Configuration
@@ -58,14 +58,14 @@ Ftbench is a set of bash scripts, requiring **bash 4.1 or higher**. It has been 
    - *Ubuntu:* 
    `sudo apt -y install git jq nfs-common python3.9 pssh wget`
 
-Optional packages that are useful for network validation and tuning:
-   >  - [iperf3]( https://iperf.fr/)
-   >  - [mtr](https://traceroute-online.com/mtr/)
-   >  - [nmap](https://nmap.org/)
-
+> Optional packages that are useful for network validation and tuning:
+   >  [iperf3]( https://iperf.fr/)
+   >  [mtr](https://traceroute-online.com/mtr/)
+   >  [nmap](https://nmap.org/)
 
 **Note:** Since Qumulo is a scale-out architecture, you will want to have enough hosts to mount each of the nodes of the Qumulo cluster you are testing. 
 
+<a id="follow"></a>
 <a id="step1"></a>
 ### Step 1: Create the service account
 
@@ -98,11 +98,11 @@ bash ./install.sh
 
 ```
 <a id="step4"></a>
-### Step 4: \$FTEST_HOME
+### Step 4: Understanding \$FTBENCH_HOME
 
-The install.sh script set \$FTEST_HOME for you, and added it to your .bashrc for persistence.
+The install.sh script set \$FTBENCH_HOME for you, and added it to your .bashrc for persistence.
 
-1. The \$FTEST_HOME directory contains the scripts, tools, config, output, and archive directories. 
+1. The \$FTBENCH_HOME directory contains the scripts, tools, config, output, and archive directories. 
 2. The output and/or archive directories store logs for each job and the CSV files created.
    - Note: The output directory can grow quite large as it store logs and output from all worker hosts.
    - Plan for available capacity of **65MB per ftbench job**.
@@ -113,7 +113,7 @@ The install.sh script set \$FTEST_HOME for you, and added it to your .bashrc for
 <a id="step5"></a>
 ### Step 5: Configure ftbench
 
-- **workers.conf**: Add the names, fully qualified domain names (FQDN), or IP addresses for each worker host to the configuration file: $FTEST_HOME/config/workers.conf
+- **workers.conf**: Add the names, fully qualified domain names (FQDN), or IP addresses for each worker host to the configuration file: $FTBENCH_HOME/config/workers.conf
   - Each entry must be resolvable by the control host.
   - _Note: Do not add the control host to the config as it would take on a worker role and be loaded down running jobs._
 
@@ -135,7 +135,7 @@ chmod 700 ${HOME}/.ssh
 chmod 600 ${HOME}/.ssh/*
 ```
 
-- **jobs.conf:** :Add the job definitions to the configuration file: `$FTEST_HOME/config/jobs.conf`
+- **jobs.conf:** :Add the job definitions to the configuration file: `$FTBENCH_HOME/config/jobs.conf`
   - See the Job Definitions section for more details on how to configure each test.
 
 #### Jobs Configuration file format 
@@ -150,21 +150,21 @@ write|408|7200|3|24|0|1|1|h264HD
 read|408|7200|3|24|408|1|1|h264HD
 ```
 
-<a id="step7"></a>
-### Step 7: Copy frametest to worker hosts
+<a id="step6"></a>
+### Step 6: Copy frametest to worker hosts
 
 Now that you have configured the workers.conffile and installed pssh, you can copy the frametest executable to all worker hosts with the below commands.
  
 **Run these two commands:**
 
 ```
-pscp.pssh -h ${FTEST_HOME}/config/workers.conf /usr/local/bin/frametest /tmp
+pscp.pssh -h ${FTBENCH_HOME}/config/workers.conf /usr/local/bin/frametest /tmp
 
-pssh -h ${FTEST_HOME}/config/workers.conf 'sudo cp -p /tmp/frametest /usr/local/bin/frametest'
+pssh -h ${FTBENCH_HOME}/config/workers.conf 'sudo cp -p /tmp/frametest /usr/local/bin/frametest'
 ```
 
-<a id="step8"></a>
-### Step 8: Mount the NFS exports
+<a id="step7"></a>
+### Step 7: Mount the NFS exports
 
 You can mount the NFS export with any optional parameters you want to test with, however the NFS export **must be mounted at `/mnt/ftbench`**.
 
@@ -184,17 +184,16 @@ touch /mnt/ftbench/test/hello.world
 This can be performed **at scale** using parallel ssh (pssh):
 
 ```
-pssh -h ${FTEST_HOME}/config/workers.conf 'sudo mkdir -p /mnt/ftbench'
-pssh -h ${FTEST_HOME}/config/workers.conf 'sudo mount -o tcp,vers=3,nconnect=16 qumulo01.qumulo.net:/nfsexport01 /mnt/ftbench'
-pssh -h ${FTEST_HOME}/config/workers.conf 'sudo chown `whoami` /mnt/ftbench'
-pssh -h ${FTEST_HOME}/config/workers.conf 'mkdir -p /mnt/ftbench/test' touch /mnt/ftbench/test/hello.world
+pssh -h ${FTBENCH_HOME}/config/workers.conf 'sudo mkdir -p /mnt/ftbench'
+pssh -h ${FTBENCH_HOME}/config/workers.conf 'sudo mount -o tcp,vers=3,nconnect=16 qumulo01.qumulo.net:/nfsexport01 /mnt/ftbench'
+pssh -h ${FTBENCH_HOME}/config/workers.conf 'sudo chown `whoami` /mnt/ftbench'
+pssh -h ${FTBENCH_HOME}/config/workers.conf 'mkdir -p /mnt/ftbench/test' touch /mnt/ftbench/test/hello.world
 ```
 
 > Note: When testing qumulo file systems be sure that **each host has mounted a different qumulo node**, either by using the round-robin DNS configuration, static IP addresses, or unique FQDN's.
 
-<a id="step9"></a>
-### Step 9. Determinng Job Definitions
-
+<a id="step8"></a>
+### Step 8. Configuring Job Definitions
 Each job is defined as combination of the following:
 
 | Field | Description |
@@ -215,7 +214,7 @@ Each job is defined as combination of the following:
 <a id="utilities"></a>
 ### Included utilities
 
-There are several helper scripts in the `$FTEST_HOME\tools` directory:
+There are several helper scripts in the `$FTBENCH_HOME\tools` directory:
 
 1. **check-ft.sh**:
    - This script will check if frametest processes are still running on the workers
@@ -231,15 +230,15 @@ There are several helper scripts in the `$FTEST_HOME\tools` directory:
 <a id="runningftbench"></a>
 ### Running ftbench
 
-Once you have defined your job definitions in the `${FTEST_HOME}/config/jobs.conf` file, execute the main script **`${FTEST_HOME}/scripts/ftbench`**. 
+Once you have defined your job definitions in the `${FTBENCH_HOME}/config/jobs.conf` file, execute the main script **`${FTBENCH_HOME}/scripts/ftbench`**. 
 
 -   You can use the Linux `screen` command in case you are diconnected, or launch the script in the background with nohup, as in the example below: 
 
-- `nohup ${FTEST_HOME}/scripts/ftbench.sh & > ${FTEST_HOME}/ftbench.out &`
+- `nohup ${FTBENCH_HOME}/scripts/ftbench.sh & > ${FTBENCH_HOME}/ftbench.out &`
 
 You can monitor the ftbench output without concern of interuppting it using the Linux utility `tail`, command below: 
 
-`tail -f ${FTEST_HOME}/ftbench.out `
+`tail -f ${FTBENCH_HOME}/ftbench.out `
 
 <a id="output"></a>
 ### Output
