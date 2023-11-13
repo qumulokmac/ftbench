@@ -79,108 +79,77 @@ Example:
 
 `git clone https://github.com/qumulokmac/ftbench.git`
 
+
 <a id="step3"></a>
-### Step 3: Set up the environment
-
-1. Set the environmental variable `$FTEST_HOME` to the install directory. For example, this command sets it to "`/home/qumulo`". 
-`export FTEST_HOME=/home/qumulo/ftbench`
-
-1. This directory will store the scripts, tools, output, and archive directories. The output and/or archive directories store logs for each job and the CSV files created.
-
-- Note: The output directory can grow quite large as it store logs and output from all worker hosts.
-- Plan for available capacity of **65MB per ftbench job**.
-
-    1. An ftbench job is a combination of codec, resolution, number of streams, number of worker hosts, etc. See the job definition section below.
-    2. Eg: Testing for 20 codecs, with 3 different resolutions, and 8 different 'stream counts' results in 160 different job definitions. This would require ~10GB of capacity.
-   
-**Add the setting to the .bashrc so it is persistent.**
-
-`echo 'export FTEST_HOME=/home/qumulo/ftbench' >> ~/.bashrc`
-
-<a id="step4"></a>
-### Step 4: Download and install frametest
-
-The frametest executable can be download manually in a browser, or you can use the following commands on the control host if it has network access. If you download manually, be sure to copy it to the `/usr/local/bin` directory with executable permissions.
-
-```
-cd /tmp
-wget -P /tmp -q http://www.dvsus.com/gold/san/frametest/lin/frametest
-sudo chmod 755 /usr/local/bin/frametest
-sudo cp /tmp/frametest /usr/local/bin
-sudo ln -s /usr/bin/parallel-ssh /usr/local/bin/pssh
-```
-<a id="step5"></a>
-### Step 5: Install ftbench
+### Step 3: Run the ftbench install.sh script
 
 Change directory into the git repository you cloned and run the install.sh script.
 
 ```
-cd ~/gitclone
+cd /path/to/cloned-repo
 chmod 755 install.sh
+./install.sh
+
 ```
+<a id="step4"></a>
+### Step 4: \$FTEST_HOME
 
-<a id="step6"></a>
-### Step 6: Configure ftbench
+The install.sh script set \$FTEST_HOME for you, and added it to your .bashrc for persistence.
 
-- **workers.conf** : Add the names, fully qualified domain names (FQDN), or IP addresses for each worker host to the configuration file: $FTEST_HOME/config/workers.conf
+1. The \$FTEST_HOME directory contains the scripts, tools, config, output, and archive directories. 
+2. The output and/or archive directories store logs for each job and the CSV files created.
+   - Note: The output directory can grow quite large as it store logs and output from all worker hosts.
+   - Plan for available capacity of **65MB per ftbench job**.
+   - An ftbench job is a combination of codec, resolution, number of streams, number of worker hosts, etc. See the job definition section below.
+
+      Eg: Testing for 20 codecs, with 3 different resolutions, and 8 different 'stream counts' results in 160 different job definitions. This would require ~10GB of capacity.
+   
+<a id="step5"></a>
+### Step 5: Configure ftbench
+
+- **workers.conf**: Add the names, fully qualified domain names (FQDN), or IP addresses for each worker host to the configuration file: $FTEST_HOME/config/workers.conf
   - Each entry must be resolvable by the control host.
   - _Note: Do not add the control host to the config as it would take on a worker role and be loaded down running jobs._
 
-- **tests.json:** Add the job definitions to the configuration file: $FTEST_HOME/config/jobs.conf
-  - See the Job Definitions section for more details on how to configure each test.
-
-Examples below:
 ```
-[qumulo@ftb-controller config]$ head workers.conf
+$ cat workers.conf
 worker01.qumulo.net
 worker02.qumulo.net
 worker03.qumulo.net
 worker04.qumulo.net
-worker05.qumulo.net
-worker06.qumulo.net
-worker07.qumulo.net
-worker08.qumulo.net
-worker09.qumulo.net
-worker10.qumulo.net
-[qumulo@ftb-controller config]$ head -n20 tests.json
-{
-  "jobs": [
-    {
-      "framesize": "786",
-      "numframes": "4",
-      "fps": "1",
-      "zsize": "24",
-      "numhosts": "786",
-      "streams": "128",
-      "codecname": "ProResHQ422HD"
-    },
-    {
-      "framesize": "3682",
-      "numframes": "4",
-      "fps": "1",
-      "zsize": "24",
-      "numhosts": "3682",
-      "streams": "128",
-      "codecname": "ProResHQ4228K"
-    },
-[qumulo@ftb-controller config]$
+```
+- **jobs.conf:** :Add the job definitions to the configuration file: `$FTEST_HOME/config/jobs.conf`
+  - See the Job Definitions section for more details on how to configure each test.
+
+#### Jobs Configuration file format 
+
+`operation|framesize|numframes|numthreads|fps|zsize|numhosts|streams|codecname`
+
+Example: 
+
+```
+$ cat jobs.conf
+write|408|7200|3|24|0|1|1|h264HD
+read|408|7200|3|24|408|1|1|h264HD
 ```
 
 <a id="step7"></a>
 ### Step 7: Copy frametest to worker hosts
 
-Now that you have configured the workers.conffile and installed pssh, copying the frametest executable to all worker hosts is simple. Run these two commands:
+Now that you have configured the workers.conffile and installed pssh, you can copy the frametest executable to all worker hosts with the below commands.
+ 
+**Run these two commands:**
 
 ```
-pscp.pssh -h ${FTEST_HOME}/config/hosts.conf /usr/local/bin/frametest /tmp
+pscp.pssh -h ${FTEST_HOME}/config/workers.conf /usr/local/bin/frametest /tmp
 
-pssh -h ${FTEST_HOME}/config/hosts.conf 'sudo cp -p /tmp/frametest /usr/local/bin/frametest'
+pssh -h ${FTEST_HOME}/config/workers.conf 'sudo cp -p /tmp/frametest /usr/local/bin/frametest'
 ```
 
 <a id="step8"></a>
 ### Step 8: Mount the NFS exports
 
-You can mount the NFS export with whichever options you want to test with, however it needs to be mounted at `/mnt/ftbench`.
+You can mount the NFS export with any optional parameters you want to test with, however the NFS export **must be mounted at `/mnt/ftbench`**.
 
 **IMPORTANT**:
 
@@ -195,19 +164,19 @@ mkdir -p /mnt/ftbench/test
 touch /mnt/ftbench/test/hello.world
 ```
 
-This can also be performed **at scale** using pssh:
+This can be performed **at scale** using parallel ssh (pssh):
 
 ```
-pssh -h ${FTEST_HOME}/config/hosts.conf 'sudo mkdir -p /mnt/ftbench'
-pssh -h ${FTEST_HOME}/config/hosts.conf 'sudo mount -o tcp,vers=3,nconnect=16 qumulo01.qumulo.net:/nfsexport01 /mnt/ftbench'
-pssh -h ${FTEST_HOME}/config/hosts.conf 'sudo chown `whoami` /mnt/ftbench'
-pssh -h ${FTEST_HOME}/config/hosts.conf 'mkdir -p /mnt/ftbench/test' touch /mnt/ftbench/test/hello.world
+pssh -h ${FTEST_HOME}/config/workers.conf 'sudo mkdir -p /mnt/ftbench'
+pssh -h ${FTEST_HOME}/config/workers.conf 'sudo mount -o tcp,vers=3,nconnect=16 qumulo01.qumulo.net:/nfsexport01 /mnt/ftbench'
+pssh -h ${FTEST_HOME}/config/workers.conf 'sudo chown `whoami` /mnt/ftbench'
+pssh -h ${FTEST_HOME}/config/workers.conf 'mkdir -p /mnt/ftbench/test' touch /mnt/ftbench/test/hello.world
 ```
 
 > Note: When testing qumulo file systems be sure that **each host has mounted a different qumulo node**, either by using the round-robin DNS configuration, static IP addresses, or unique FQDN's.
 
 <a id="step9"></a>
-### Step 9. Configure the Job Definitions
+### Step 9. Determinng Job Definitions
 
 Each job is defined as combination of the following:
 
@@ -222,38 +191,14 @@ Each job is defined as combination of the following:
 | streams | Number of streams for this particular test |
 | pattern | An identifier used for this test. No spaces. |
 
-
-Example input table:
-
-**Insert pic here**
-
-- There are example configuration files in the repository, but you will want to create your own based on your needs. Use the examples as reference.
-
-**TIP:** Use a spreadsheet to come up with your specific formulas/values, and then export the fields to a CSV file. Then use the `jq` snippit below to convert the CSV to JSON. _Your welcome._
-
-```JSON
-jq -Rsn '
-  { "jobs":
-   [inputs
-   | . / "\n"
-   | (.[] | select(length > 0) | . / ",") as $input
-   | { "framesize": $input[0],
-       "numframes": $input[1],
-       "fps": $input[2],
-       "zsize": $input[3],
-       "numhosts": $input[4],
-       "numframes": $input[5],
-       "streams": $input[6],
-       "codecname": $input[7]
-     }
-     ]
-   }
-   ' < jobs.csv
-```
-- **DO NOT** _use spaces, dashes, or any other whitespace_ in the data fields. Keep it simple, as field level data validation hasn't been added yet. Garbage in, garbage out.
+   - There is a [example config spreadsheet](https://github.com/qumulokmac/ftbench/blob/main/examples/example-frametest-sizing.xlsx) in the exampes directory to help you get started, but you will want to create your own based on your needs. 
+   
+   - **DO NOT** _use spaces, dashes, or any other whitespace in the data fields_. Keep it simple, as field level data validation hasn't been added yet. Garbage in, garbage out.
 
 <a id="utilities"></a>
 ### Included utilities
+
+There are several helper scripts in the `$FTEST_HOME\tools` directory:
 
 1. **check-ft.sh**:
    - This script will check if frametest processes are still running on the workers
@@ -269,9 +214,11 @@ jq -Rsn '
 <a id="runningftbench"></a>
 ### Running ftbench
 
-Once you have defined your job definitions, execute the script **`${FTEST_HOME}/scripts/ftbench`**. You can use the Linux `screen` command in case you are diconnected, or launch the script in the background with nohup, as in the example below: 
+Once you have defined your job definitions in the `${FTEST_HOME}/config/jobs.conf` file, execute the main script **`${FTEST_HOME}/scripts/ftbench`**. 
 
-`nohup ${FTEST_HOME}/scripts/ftbench.sh & > ${FTEST_HOME}/ftbench.out &`
+-   You can use the Linux `screen` command in case you are diconnected, or launch the script in the background with nohup, as in the example below: 
+
+- `nohup ${FTEST_HOME}/scripts/ftbench.sh & > ${FTEST_HOME}/ftbench.out &`
 
 You can monitor the ftbench output without concern of interuppting it using the Linux utility `tail`, command below: 
 
@@ -327,7 +274,7 @@ Once you get the data from ftbench it needs to be analyzed. Currently, this is b
 
 Here is an example spreadsheet used to calculate the input variables for ftbench: 
 
-[example config spreadsheet](https://github.com/qumulokmac/ftbench/examples/example-frametest-sizing.xlsx)
+There is a [example config spreadsheet](https://github.com/qumulokmac/ftbench/blob/main/examples/example-frametest-sizing.xlsx) in the exampes subdirectory.
 
 ---
 

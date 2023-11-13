@@ -6,12 +6,33 @@
 ################################################################################
 
 ###
-# Check that FTEST_HOME is set and exists
+# Prompt the user for the $FTEST_HOME location
 ###
+printf "Enter the absolute path for the install directory [Hit enter for \$HOME/ftbench] "
+read answer
+
+if [ -z $answer ]
+then
+  printf "\nSetting \$FTEST_HOME to ${answer}\n"
+  export FTEST_HOME=$HOME/ftbench
+  echo "export FTEST_HOME=$HOME/ftbench" >> $HOME/.bashrc
+else
+  if [ "${answer}" != '^\/' ] ; then
+    printf "Please use the absolute path\n"
+    exit 1
+  fi
+  printf "\nSetting \$FTEST_HOME to ${answer}\n"
+  export FTEST_HOME=${answer}/ftbench
+  echo "export FTEST_HOME=${answer}/ftbench" >> $HOME/.bashrc
+fi
+
 if [ ! -e $FTEST_HOME ]; then
-  printf "FTEST_HOME environmental variable is not set or doesnt exist\n"
-  printf "Run mkdir \$FTEST_HOME ?\n\n"
-  exit 1
+  printf "Creating directory ${FTEST_HOME}\n"
+  mkdir $FTEST_HOME
+  if [ $? != 0 ] ; then
+      printf "Could not create directory ${FTEST_HOME}\n"
+      exit 1
+  fi
 fi
 
 ###
