@@ -14,18 +14,18 @@
 ################################################################################
 
 ###
-# Check that FTEST_HOME is set and exists
+# Check that FTBENCH_HOME is set and exists
 ###
-if [ ! -e $FTEST_HOME ]; then
-  printf "FTEST_HOME environmental variable is not set or doesnt exist"
+if [ ! -e $FTBENCH_HOME ]; then
+  printf "FTBENCH_HOME environmental variable is not set or doesnt exist"
   exit 1
 fi
 
 FTEXEC="/usr/local/bin"
 BASEDATADIR="/mnt/ftbench/run-$$"
-JOBFILE="${FTEST_HOME}/config/jobs.conf"
-WORKERHOSTS="${FTEST_HOME}/config/workers.conf"
-OUTPUTDIR="${FTEST_HOME}/output"
+JOBFILE="${FTBENCH_HOME}/config/jobs.conf"
+WORKERHOSTS="${FTBENCH_HOME}/config/workers.conf"
+OUTPUTDIR="${FTBENCH_HOME}/output"
 USER=`whoami`
 
 ################################################################################

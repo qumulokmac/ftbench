@@ -11,16 +11,16 @@
 ################################################################################
 
 ###
-# Check that FTEST_HOME is set and exists
+# Check that FTBENCH_HOME is set and exists
 ###
-if [ ! -e $FTEST_HOME ]; then
-  printf "FTEST_HOME environmental variable is not set or doesnt exist"
+if [ ! -e $FTBENCH_HOME ]; then
+  printf "FTBENCH_HOME environmental variable is not set or doesnt exist"
   exit 1
 fi
 
-OUTPUTDIR="${FTEST_HOME}/output"
+OUTPUTDIR="${FTBENCH_HOME}/output"
 
-${FTEST_HOME}/tools/pulldata.sh
+${FTBENCH_HOME}/tools/pulldata.sh
 
 echo "\"Date\",\"Time\",\"Codec\",\"Dropped Frames\",\"Framesize\",\"NumFrames\",\"Threads\",\"FPS\",\"Zsize\",\"NumHosts\",\"Framerate\",\"Bandwidth\",\"Number of Streams\",\"Host\",\"Test Path\",\"Output Filename\""
 for file in `find ${OUTPUTDIR} -name "*.csv"`

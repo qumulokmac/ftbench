@@ -5,27 +5,28 @@
 # Nov 10th, 2023
 ################################################################################
 
+USER=`whoami`
 ###
 # Prompt the user for the $FTEST_HOME location
 ###
 printf "Enter the absolute path for the install directory [Hit enter for \$HOME/ftbench] "
-read answer
+read USERINPUT
 
-if [ -z $answer ]
+if [ -z $USERINPUT ]
 then
-  printf "\nSetting \$FTEST_HOME to ${answer}\n"
-  export FTEST_HOME=$HOME/ftbench
-  echo "export FTEST_HOME=$HOME/ftbench" >> $HOME/.bashrc
+  export FTEST_HOME=${HOME}/ftbench
+  echo "export FTEST_HOME=${HOME}/ftbench" >> ${HOME}/.bashrc
+  printf "Set \$FTEST_HOME to ${FTEST_HOME}\n"
 else
-  if [[ "${answer}" != \/*  ]] ; then
+  if [[ "${USERINPUT}" != \/*  ]] ; then
     printf "Please use the absolute path. Example: /home/qumulo/installdir \n"
     exit 1
   else
-    mkdir -p ${answer}
+    mkdir -p ${USERINPUT}
   fi
-  printf "\nSetting \$FTEST_HOME to ${answer}\n"
-  export FTEST_HOME=${answer}/ftbench
-  echo "export FTEST_HOME=${answer}/ftbench" >> $HOME/.bashrc
+  printf "\nSetting \$FTEST_HOME to ${USERINPUT}\n"
+  export FTEST_HOME=${USERINPUT}/ftbench
+  echo "export FTEST_HOME=${USERINPUT}/ftbench" >> ${HOME}/.bashrc
 fi
 
 if [ ! -e $FTEST_HOME ]; then
@@ -72,19 +73,24 @@ if [ ! -e scripts/ftbench.sh ] ; then
   printf "Please run install.sh the git repo directory, exiting\n\n"
   exit 2
 fi
-mkdir -p $FTEST_HOME/config $FTEST_HOME/output $FTEST_HOME/archive $FTEST_HOME/tools ${FTEST_HOME}/scripts
+mkdir -p $FTEST_HOME/config $FTEST_HOME/output $FTEST_HOME/archive $FTEST_HOME/tools ${FTEST_HOME}/scripts 
+sudo mkdir /mnt/ftbench 
+sudo chown $USER /mnt/ftbench
 
 if [ ! $? ]; then
-  printf "\n\nCould not create the ftbench subdirs, check: $FTEST_HOME\n"
+  printf "\nCould not create the ftbench subdirs, check: $FTEST_HOME\n"
   exit 1
 fi
 
 cp -rp  scripts/* ${FTEST_HOME}/scripts
+cp -rp  config/* ${FTEST_HOME}/config
 cp -rp  tools/* ${FTEST_HOME}/tools
 chmod -R 755 ${FTEST_HOME}
 
-printf "\nftbench installed in $FTEST_HOME\n"
-printf "Set \$FTEST_HOME by sourcing your .bashrc, example below\n"
-printf ". ~/.bashrc\n\n"
+printf "ftbench installed in: $FTEST_HOME\n"
+printf "To set \$FTEST_HOME source the .bashrc file as such:\n\n"
+printf ". ~/.bashrc\n"
+printf "echo \$FTEST_HOME"
+
 
 exit 0 
