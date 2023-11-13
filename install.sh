@@ -7,16 +7,16 @@
 
 USER=`whoami`
 ###
-# Prompt the user for the $FTEST_HOME location
+# Prompt the user for the $FTBENCH_HOME location
 ###
 printf "Enter the absolute path for the install directory [Hit enter for \$HOME/ftbench] "
 read USERINPUT
 
 if [ -z $USERINPUT ]
 then
-  export FTEST_HOME=${HOME}/ftbench
-  echo "export FTEST_HOME=${HOME}/ftbench" >> ${HOME}/.bashrc
-  printf "Set \$FTEST_HOME to ${FTEST_HOME}\n"
+  export FTBENCH_HOME=${HOME}/ftbench
+  echo "export FTBENCH_HOME=${HOME}/ftbench" >> ${HOME}/.bashrc
+  printf "Set \$FTBENCH_HOME to ${FTBENCH_HOME}\n"
 else
   if [[ "${USERINPUT}" != \/*  ]] ; then
     printf "Please use the absolute path. Example: /home/qumulo/installdir \n"
@@ -24,16 +24,16 @@ else
   else
     mkdir -p ${USERINPUT}
   fi
-  printf "\nSetting \$FTEST_HOME to ${USERINPUT}\n"
-  export FTEST_HOME=${USERINPUT}/ftbench
-  echo "export FTEST_HOME=${USERINPUT}/ftbench" >> ${HOME}/.bashrc
+  printf "\nSetting \$FTBENCH_HOME to ${USERINPUT}\n"
+  export FTBENCH_HOME=${USERINPUT}/ftbench
+  echo "export FTBENCH_HOME=${USERINPUT}/ftbench" >> ${HOME}/.bashrc
 fi
 
-if [ ! -e $FTEST_HOME ]; then
-  printf "Creating directory ${FTEST_HOME}\n"
-  mkdir $FTEST_HOME
+if [ ! -e $FTBENCH_HOME ]; then
+  printf "Creating directory ${FTBENCH_HOME}\n"
+  mkdir $FTBENCH_HOME
   if [ $? != 0 ] ; then
-      printf "Could not create directory ${FTEST_HOME}\n"
+      printf "Could not create directory ${FTBENCH_HOME}\n"
       exit 1
   fi
 fi
@@ -73,24 +73,24 @@ if [ ! -e scripts/ftbench.sh ] ; then
   printf "Please run install.sh the git repo directory, exiting\n\n"
   exit 2
 fi
-mkdir -p $FTEST_HOME/config $FTEST_HOME/output $FTEST_HOME/archive $FTEST_HOME/tools ${FTEST_HOME}/scripts 
+mkdir -p $FTBENCH_HOME/config $FTBENCH_HOME/output $FTBENCH_HOME/archive $FTBENCH_HOME/tools ${FTBENCH_HOME}/scripts 
 sudo mkdir /mnt/ftbench 
 sudo chown $USER /mnt/ftbench
 
 if [ ! $? ]; then
-  printf "\nCould not create the ftbench subdirs, check: $FTEST_HOME\n"
+  printf "\nCould not create the ftbench subdirs, check: $FTBENCH_HOME\n"
   exit 1
 fi
 
-cp -rp  scripts/* ${FTEST_HOME}/scripts
-cp -rp  config/* ${FTEST_HOME}/config
-cp -rp  tools/* ${FTEST_HOME}/tools
-chmod -R 755 ${FTEST_HOME}
+cp -rp  scripts/* ${FTBENCH_HOME}/scripts
+cp -rp  config/* ${FTBENCH_HOME}/config
+cp -rp  tools/* ${FTBENCH_HOME}/tools
+chmod -R 755 ${FTBENCH_HOME}
 
-printf "ftbench installed in: $FTEST_HOME\n"
-printf "To set \$FTEST_HOME source the .bashrc file as such:\n\n"
+printf "ftbench installed in: $FTBENCH_HOME\n"
+printf "To set \$FTBENCH_HOME source the .bashrc file as such:\n\n"
 printf ". ~/.bashrc\n"
-printf "echo \$FTEST_HOME"
+printf "echo \$FTBENCH_HOME\n\n"
 
 
 exit 0 
