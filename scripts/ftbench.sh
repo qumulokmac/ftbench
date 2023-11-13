@@ -50,8 +50,7 @@ function gatherLogs
       printf "Reconcile manually\n\n"
     fi
 
-    command="scp -rp $USER@${HOSTS[$hostindex]}:/${OUTPUTDIR} ${OUTPUTDIR}/"
-    command="scp -rp $USER@${HOSTS[$hostindex]}:/${OUTPUTDIR}/\* ${OUTPUTDIR}"
+    command="scp -rp $USER@${HOSTS[$hostindex]}:${OUTPUTDIR}/* ${OUTPUTDIR}"
     printf "\nGathering output: ${command}\n\n"
     bash -c "${command}" 
 
