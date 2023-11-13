@@ -73,7 +73,7 @@ if [ ! -e scripts/ftbench.sh ] ; then
   exit 2
 fi
 mkdir -p $FTBENCH_HOME/config $FTBENCH_HOME/output $FTBENCH_HOME/archive $FTBENCH_HOME/tools ${FTBENCH_HOME}/scripts 
-sudo mkdir /mnt/ftbench 
+sudo mkdir -p /mnt/ftbench 
 sudo chown $USER /mnt/ftbench
 
 if [ ! $? ]; then
@@ -86,7 +86,7 @@ cp -rp  config/* ${FTBENCH_HOME}/config
 cp -rp  tools/* ${FTBENCH_HOME}/tools
 chmod -R 755 ${FTBENCH_HOME}
 
-printf "ftbench installed in: $FTBENCH_HOME\nBe sure to mount the NFS exports at /mnt/ftbench.\n"
+printf "ftbench installed in: $FTBENCH_HOME\n\nBe sure to mount the NFS exports at /mnt/ftbench per the Readme.\n"
 printf "Either log out and back in, or source the .bashrc file to set \$FTBENCH_HOME.\nCommand to source .bashrc:\n"
 printf ". ~/.bashrc && echo \$FTBENCH_HOME\n\n"
 
