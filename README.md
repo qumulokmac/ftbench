@@ -39,8 +39,8 @@ Ftbench is a set of bash scripts, requiring **bash 4.1 or higher**. It has been 
 <a id="requirements"></a>
 ### Requirements
 1. **Hard requirement**. For frametest to work, *you must install the following package* to enable cross-compilation of programs. See [this]( https://devicetests.com/understanding-gcc-multilib-ubuntu) Ubuntu article to learn more about cross-compilation.
-   - Centos: `sudo yum install glibc.i686`
-   - Ubuntu: `sudo apt-get install gcc-multilib`
+   - Centos: `sudo yum -y install glibc.i686`
+   - Ubuntu: `sudo apt-get -y install gcc-multilib`
 1. A **single "Controller"** Linux host is required to manage jobs and distribute processes to the worker hosts for concurrent stream testing.
    - The controller host does not need much processing power, so a general purpose VM is fine.
    
@@ -53,10 +53,10 @@ Ftbench is a set of bash scripts, requiring **bash 4.1 or higher**. It has been 
    - **Net:net**, the service account user needs to be able to ssh from the control host to each worker host to launch the frametest jobs.
 4. Additional packages:
    - *Centos:* 
-   `sudo yum -y install git jq nfs-utils python3.9 pssh wget`
+   `sudo yum -y install git jq nfs-utils pssh wget`
    
    - *Ubuntu:* 
-   `sudo apt -y install git jq nfs-common python3.9 pssh wget`
+   `sudo apt -y install git jq nfs-common pssh wget`
 
 > Optional packages that are useful for network validation and tuning:
    >  [iperf3]( https://iperf.fr/)
@@ -155,12 +155,18 @@ read|408|7200|3|24|408|1|1|h264HD
 
 Now that you have configured the workers.conffile and installed pssh, you can copy the frametest executable to all worker hosts with the below commands.
  
-**Run these two commands:**
+**Run these few commands:**
 
 ```
-pscp.pssh -h ${FTBENCH_HOME}/config/workers.conf /usr/local/bin/frametest /tmp
+/usr/bin/parallel-scp -h ${FTBENCH_HOME}/config/workers.conf /usr/local/bin/frametest /tmp
 
-pssh -h ${FTBENCH_HOME}/config/workers.conf 'sudo cp -p /tmp/frametest /usr/local/bin/frametest'
+/usr/bin/parallel-ssh -h ${FTBENCH_HOME}/config/workers.conf 'sudo cp -p /tmp/frametest /usr/local/bin/frametest'
+
+USER=`who -m | awk {'print $1'}`
+
+/usr/bin/parallel-ssh -h ${FTBENCH_HOME}/config/workers.conf 'sudo chown $USER /usr/local/bin/frametest'
+
+/usr/bin/parallel-ssh -h ${FTBENCH_HOME}/config/workers.conf  -i '/usr/local/bin/frametest'
 ```
 
 <a id="step7"></a>
@@ -234,11 +240,11 @@ Once you have defined your job definitions in the `${FTBENCH_HOME}/config/jobs.c
 
 -   You can use the Linux `screen` command in case you are diconnected, or launch the script in the background with nohup, as in the example below: 
 
-- `nohup ${FTBENCH_HOME}/scripts/ftbench.sh & > ${FTBENCH_HOME}/ftbench.out &`
+- `nohup ${FTBENCH_HOME}/scripts/ftbench.sh > ${FTBENCH_HOME}/output/ftbench-`date +%Y%m%d%H%M%S`.out & `
 
-You can monitor the ftbench output without concern of interuppting it using the Linux utility `tail`, command below: 
+You can monitor the ftbench output without concern of interuppting it using the Linux utility `tail`, for example *(use ftbench-${date}.out from above)*: 
 
-`tail -f ${FTBENCH_HOME}/ftbench.out `
+`tail -f ${FTBENCH_HOME}/output/ftbench-20231101165556.out`
 
 <a id="output"></a>
 ### Output
